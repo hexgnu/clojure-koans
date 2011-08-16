@@ -19,24 +19,34 @@
   (= "Rich Hickey aka The Clojurer aka Go Time aka Macro Killah"
      (let [[first-name last-name & aliases]
              (list "Rich" "Hickey" "The Clojurer" "Go Time" "Macro Killah")]
-       ___))
+       (str 
+         first-name " " last-name
+         (apply str (map (fn [n] (str " aka " n)) aliases))
+       )
+      )
+    )
+
+
 
   "You can regain the full argument if you like arguing"
   (= {:original-parts ["Steven" "Hawking"] :named-parts {:first "Steven" :last "Hawking"}}
      (let [[first-name last-name :as full-name] ["Steven" "Hawking"]]
-       __))
+       {:original-parts [first-name last-name] :named-parts {:first first-name :last last-name}}))
 
   "Break up maps by key"
   (= "123 Test Lane, Testerville, TX"
      (let [{street-address :street-address, city :city, state :state} test-address]
-            __))
+            (apply str (interpose ", " (list street-address city state)))))
 
   "Or more succinctly"
   (= "123 Test Lane, Testerville, TX"
-     (let [{:keys [street-address __ __]} test-address]
-            __))
+     (let [{:keys [street-address city state]} test-address]
+            (apply str (interpose ", " (list street-address city state)))))
 
   "All together now!"
   (= "Test Testerson, 123 Test Lane, Testerville, TX"
-     (___ ["Test" "Testerson"] test-address))
+     ((fn [[fname lname]
+                  {:keys [street-address city state]}]
+               (str fname " " lname ", "
+                    street-address ", " city ", " state)) ["Test" "Testerson"] test-address))
 )
